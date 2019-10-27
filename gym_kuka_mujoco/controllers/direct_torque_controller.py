@@ -9,6 +9,7 @@ from gym_kuka_mujoco.utils.mujoco_utils import kuka_subtree_mass, get_qpos_indic
 from .base_controller import BaseController
 from . import register_controller
 
+
 class DirectTorqueController(BaseController):
     '''
     A simple controller that takes raw torque actions.
@@ -60,7 +61,7 @@ class DirectTorqueController(BaseController):
         self.action_space = gym.spaces.Box(low, high, dtype=np.float32)
 
     def set_action(self, action):
-        self.torque = action*self.action_scaling
+        self.torque = action * self.action_scaling
 
     def get_torque(self):
         torque = self.torque.copy()
@@ -75,6 +76,7 @@ class DirectTorqueController(BaseController):
 
         return torque
 
+
 class SACTorqueController(DirectTorqueController):
     '''
     A simple controller that takes raw torque actions.
@@ -86,6 +88,7 @@ class SACTorqueController(DirectTorqueController):
         limited_low = self.action_space.low*action_limit
         limited_high = self.action_space.high*action_limit
         self.action_space = gym.spaces.Box(limited_low, limited_high, dtype=np.float32)
+
 
 register_controller(DirectTorqueController, 'DirectTorqueController')
 register_controller(SACTorqueController, 'SACTorqueController')

@@ -7,8 +7,10 @@ from mujoco_py.builder import MujocoException
 from .assets import kuka_asset_dir
 from gym_kuka_mujoco.controllers import controller_registry
 
+
 class KukaEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     default_info = dict()
+
     def __init__(self,
                  controller,
                  controller_options,
@@ -16,10 +18,10 @@ class KukaEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  frame_skip=20,
                  time_limit=3.,
                  timestep=0.002,
-                 random_model = False,
-                 random_target = False,
-                 quadratic_pos_cost = True,
-                 quadratic_vel_cost = False):
+                 random_model=False,
+                 random_target=False,
+                 quadratic_pos_cost=True,
+                 quadratic_vel_cost=False):
         '''
         Constructs the file, sets the time limit and calls the constructor of
         the super class.
@@ -37,8 +39,8 @@ class KukaEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         # Parameters for the cost function
         self.state_des = np.zeros(14)
-        self.Q_pos = np.diag([1.,1.,1.,1.,1.,1.,1.,0.,0.,0.,0.,0.,0.,0.])
-        self.Q_vel = np.diag([0.,0.,0.,0.,0.,0.,0.,1.,1.,1.,1.,1.,1.,1.])
+        self.Q_pos = np.diag([1., 1., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0., 0.])
+        self.Q_vel = np.diag([0., 0., 0., 0., 0., 0., 0., 1., 1., 1., 1.,1.,1.,1.])
 
         # Call the super class
         self.initialized = False
@@ -71,6 +73,7 @@ class KukaEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         controller.
         Optional argument render will render the intermediate frames for a smooth animation.
         '''
+
         # Hack to return an observation during the super class __init__ method.
         if not self.initialized:
             return self._get_obs(), 0, False, {}
@@ -92,11 +95,13 @@ class KukaEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                 torque = self._get_torque()
                 self.sim.data.ctrl[:] = np.clip(torque, -300, 300)
                 self.sim.data.qfrc_applied[:] = self._get_random_applied_force()
+
+                # execute the current action
                 self.sim.step()
                 if not np.all(np.isfinite(self.sim.data.qpos)):
                     print("Warning: simulation step returned inf or nan.")
                 reward, reward_info = self._get_reward(state, action)
-                total_reward += reward*dt
+                total_reward += reward * dt
                 for k, v in reward_info.items():
                     if 'reward' in k:
                         total_reward_info[k] = total_reward_info.get(k,0) + v*dt
@@ -155,7 +160,6 @@ class KukaEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         '''
         return self.state_des[:7]
 
-        
     def _get_reward(self, state, action):
         '''
         Compute single step reward.

@@ -9,6 +9,7 @@ from gym_kuka_mujoco.utils.projection import rotate_cost_by_matrix
 from gym_kuka_mujoco.utils.quaternion import mat2Quat, subQuat
 from gym_kuka_mujoco.envs.assets import kuka_asset_dir
 
+
 class HammerEnv(kuka_env.KukaEnv):
     
     def __init__(self,

@@ -9,6 +9,7 @@ from gym_kuka_mujoco.utils.projection import rotate_cost_by_matrix
 from gym_kuka_mujoco.utils.quaternion import mat2Quat, subQuat, quatAdd
 from gym_kuka_mujoco.envs.assets import kuka_asset_dir
 
+
 class HoldPositionEnv(kuka_env.KukaEnv):
     '''
     An environment designed to train a policy to be tested on hardware.

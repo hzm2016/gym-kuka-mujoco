@@ -1,5 +1,6 @@
 import abc
 
+
 class BaseController(abc.ABC):
     '''
     An abstract base class for low level controllers.

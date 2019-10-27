@@ -5,6 +5,7 @@ from gym_kuka_mujoco.utils.quaternion import identity_quat, mat2Quat, subQuat
 
 identity_quat = np.array([1., 0., 0., 0.])
 
+
 def forwardKin(sim, pos, quat, body_id, recompute=True):
     '''
     Compute the forward kinematics for the position and orientation of a frame
@@ -23,6 +24,7 @@ def forwardKin(sim, pos, quat, body_id, recompute=True):
     xrot = xrot.reshape(3,3)
     return xpos, xrot
 
+
 def forwardKinSite(sim, site_name, recompute=True):
     '''
     Compute the forward kinematics for the position and orientation a labelled site.
@@ -39,6 +41,7 @@ def forwardKinSite(sim, site_name, recompute=True):
         xrot = sim.data.get_site_xmat(site_name)
 
     return xpos, xrot
+
 
 def forwardKinJacobian(sim, pos, body_id, recompute=True):
     '''
@@ -65,6 +68,7 @@ def forwardKinJacobian(sim, pos, body_id, recompute=True):
     jacr = jacr.reshape(jac_shape)
     
     return jacp, jacr
+
 
 def forwardKinJacobianSite(sim, site_id, recompute=True):
     '''

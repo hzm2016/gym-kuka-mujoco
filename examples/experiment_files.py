@@ -78,6 +78,7 @@ def get_experiment_dirs(rel_path=''):
 
     return paths
 
+
 def get_latest_experiment_dir(rel_path=''):
     '''
     Searches for all of the experiment directories relative to the root

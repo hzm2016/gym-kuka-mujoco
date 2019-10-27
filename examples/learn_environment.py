@@ -88,7 +88,6 @@ def make_env(env_cls,
 def run_learn(params, save_path, model=None, run_count=0):
     '''
     Runs the learning experiment defined by the params dictionary.
-
     :param params: (dict) the parameters for the learning experiment
     '''
     # Unpack options
@@ -113,6 +112,7 @@ def run_learn(params, save_path, model=None, run_count=0):
             info_keywords=params.get('info_keywords', None),
             **params['env_options']) for i in range(params['n_env'])
     ]
+
     # envs = [make_env(params['env'], i, save_path) for i in range(params['n_env'])]
 
     if params.get('vectorized', True):

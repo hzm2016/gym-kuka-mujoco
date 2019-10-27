@@ -144,6 +144,7 @@ class PDController(BaseController):
 
         return torque
 
+
 class RelativePDController(PDController):
     def set_action(self, action):
         action = action * self.action_scale

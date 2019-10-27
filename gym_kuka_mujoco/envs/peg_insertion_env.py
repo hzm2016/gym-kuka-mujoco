@@ -9,8 +9,9 @@ from gym_kuka_mujoco.utils.projection import rotate_cost_by_matrix
 from gym_kuka_mujoco.utils.quaternion import mat2Quat, subQuat, quatAdd
 from gym_kuka_mujoco.envs.assets import kuka_asset_dir
 
+
 class PegInsertionEnv(kuka_env.KukaEnv):
-    
+    """ peg in hole environment """
     def __init__(self,
                  *args,
                  hole_id=99,
@@ -53,10 +54,9 @@ class PegInsertionEnv(kuka_env.KukaEnv):
         else:
             kwargs['model_path'] = kwargs.get('model_path', 'full_peg_insertion_experiment_no_hole{}.xml').format(gravity_string)       
         super(PegInsertionEnv, self).__init__(*args, **kwargs)
-        
 
-        self.Q_pos = np.diag([100,100,100])
-        self.Q_rot = np.diag([30,30,30])
+        self.Q_pos = np.diag([100, 100, 100])
+        self.Q_rot = np.diag([30, 30, 30])
         if self.regularize_pose:
             self.Q_pose_reg = np.eye(7)
 
@@ -72,7 +72,7 @@ class PegInsertionEnv(kuka_env.KukaEnv):
         Compute single step reward.
         '''
         # compute position and rotation error
-        pos, rot = forwardKinSite(self.sim, ['peg_tip','hole_base'], recompute=False)
+        pos, rot = forwardKinSite(self.sim, ['peg_tip', 'hole_base'], recompute=False)
         pos_err = pos[0] - pos[1]
         dist = np.sqrt(pos_err.dot(pos_err))
         peg_quat = mat2Quat(rot[0])
@@ -88,7 +88,7 @@ class PegInsertionEnv(kuka_env.KukaEnv):
         
         # quadratic cost on the error and action
         # rotate the cost terms to align with the hole
-        Q_pos = rotate_cost_by_matrix(self.Q_pos,rot[1].T)
+        Q_pos = rotate_cost_by_matrix(self.Q_pos, rot[1].T)
         # Q_vel = rotate_cost_by_matrix(self.Q_vel,rot[1].T)
         Q_rot = self.Q_rot
 
@@ -130,7 +130,7 @@ class PegInsertionEnv(kuka_env.KukaEnv):
 
     def _get_info(self):
         info = dict()
-        pos, rot = forwardKinSite(self.sim, ['peg_tip','hole_base'], recompute=False)
+        pos, rot = forwardKinSite(self.sim, ['peg_tip', 'hole_base'], recompute=False)
         pos_err = pos[0] - pos[1]
         dist = np.sqrt(pos_err.dot(pos_err))
         info['tip_distance'] = dist
@@ -157,15 +157,13 @@ class PegInsertionEnv(kuka_env.KukaEnv):
         else:
             # Compute F/T sensor data
             ft_obs = self.sim.data.sensordata
-            
-
             obs = obs / self.obs_scaling
 
         if self.use_ft_sensor:
             obs = np.concatenate([obs, ft_obs])
 
         # End effector position
-        pos, rot = forwardKinSite(self.sim, ['peg_tip','hole_base','hole_top'])
+        pos, rot = forwardKinSite(self.sim, ['peg_tip', 'hole_base', 'hole_top'])
         
         if self.use_rel_pos_err:
             pos_obs = pos[1] - pos[0]
@@ -195,12 +193,6 @@ class PegInsertionEnv(kuka_env.KukaEnv):
         obs = np.concatenate([obs, pos_obs, rot_obs, peg_tip_lin_vel, peg_tip_rot_vel, hole_top_obs])
 
         return obs
-
-# def test_quatInegrate():
-#     q2 = random_quat()
-#     v = subQuat(q2, identity_quat)
-#     q2_ = quatIntegrate(identity_quat, v)
-#     assert np.allclose(q2, q2_), 'quatIntegrate test failed'
 
     def _get_target_obs(self):
         # Compute relative position error
@@ -255,6 +247,12 @@ class PegInsertionEnv(kuka_env.KukaEnv):
         self.good_states = hole_data['good_poses']
         self.sim.data.set_mocap_pos('hole', hole_data['hole_pos'])
         self.sim.data.set_mocap_quat('hole', hole_data['hole_quat'])
+
+# def test_quatInegrate():
+#     q2 = random_quat()
+#     v = subQuat(q2, identity_quat)
+#     q2_ = quatIntegrate(identity_quat, v)
+#     assert np.allclose(q2, q2_), 'quatIntegrate test failed'
 
 # [-0.00336991,  0.76797655, -0.01091426, -1.11394698,  0.0388207 ,  1.3678605 , -0.0077345 ]
 # [-1.03213825e-08,  6.68086145e-01,  1.85550710e-08, -1.12884164e+00,  -1.17948636e-08,  1.34466485e+00,  6.88901499e-09]

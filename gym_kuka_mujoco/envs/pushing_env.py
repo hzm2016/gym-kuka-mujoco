@@ -188,7 +188,7 @@ class PushingEnv(kuka_env.KukaEnv):
         # Compute relative position error
         raise NotImplementedError
         if self.use_rel_pos_err:
-            pos, rot = forwardKinSite(self.sim, ['hammer_tip','nail_top'])
+            pos, rot = forwardKinSite(self.sim, ['hammer_tip', 'nail_top'])
             pos_obs = pos[0] - pos[1]
             quat_hammer_tip = mat2Quat(rot[0])
             quat_nail_top = mat2Quat(rot[1])

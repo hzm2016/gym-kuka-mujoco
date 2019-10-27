@@ -79,6 +79,7 @@ class TBWrapper(Wrapper):
 
         self.env.close()
 
+
 class TBVecEnvWrapper(VecEnvWrapper):
 
     def __init__(self, venv, logdir, info_keywords=(), **kwargs):

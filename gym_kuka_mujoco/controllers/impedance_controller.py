@@ -11,6 +11,7 @@ from gym_kuka_mujoco.utils.kinematics import forwardKinSite, forwardKinJacobianS
 from .base_controller import BaseController
 from . import register_controller
 
+
 class ImpedanceController(BaseController):
     '''
     An inverse dynamics controller that used PD gains to compute a desired acceleration.
@@ -33,10 +34,10 @@ class ImpedanceController(BaseController):
         self.model = mujoco_py.load_model_from_path(model_path)
 
         # Construct the action space.
-        high_pos = pos_limit*np.ones(3)
+        high_pos = pos_limit * np.ones(3)
         low_pos = -high_pos
 
-        high_rot = rot_limit*np.ones(3)
+        high_rot = rot_limit * np.ones(3)
         low_rot = -high_rot
 
         high = np.concatenate((high_pos, high_rot))

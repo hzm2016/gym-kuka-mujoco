@@ -37,7 +37,7 @@ class FullImpedanceController(BaseController):
 
         # Set the zero position and quaternion of the action space.
         if nominal_pos is None:
-            self.nominal_pos = np.array([0.,0.,0.]) #TODO: use a real position
+            self.nominal_pos = np.array([0., 0., 0.]) #TODO: use a real position
         else:
             # Convert to a numpy array if necessary.
             if isinstance(nominal_pos, np.ndarray):
@@ -68,9 +68,9 @@ class FullImpedanceController(BaseController):
         self.model = mujoco_py.load_model_from_path(model_path)
 
         # Construct the action space.
-        high_pos = pos_limit*np.ones(3)
+        high_pos = pos_limit * np.ones(3)
         low_pos = -high_pos
-        high_rot = rot_limit*np.ones(3)
+        high_rot = rot_limit * np.ones(3)
         low_rot = -high_rot
 
         high = np.concatenate((high_pos, high_rot))
@@ -90,9 +90,9 @@ class FullImpedanceController(BaseController):
         if stiffness is None:
             self.stiffness = np.array([1.0, 1.0, 1.0, 0.3, 0.3, 0.3])
         else:
-            self.stiffness = np.ones(6)*stiffness
+            self.stiffness = np.ones(6) * stiffness
 
-        if damping=='auto':
+        if damping == 'auto':
             self.damping = 2*np.sqrt(self.stiffness)
         else:
             self.damping = 2*np.sqrt(self.stiffness)*damping
@@ -137,18 +137,19 @@ class FullImpedanceController(BaseController):
         '''
         Update the impedance control setpoint and compute the torque.
         '''
+
         # Compute the pose difference.
         pos, mat = forwardKinSite(self.sim, self.site_name, recompute=False)
         quat = mat2Quat(mat)
         dx = self.pos_set - pos
         dr = subQuat(self.quat_set, quat) # Original
-        dframe = np.concatenate((dx,dr))
+        dframe = np.concatenate((dx, dr))
 
         # Compute generalized forces from a virtual external force.
         jpos, jrot = forwardKinJacobianSite(self.sim, self.site_name, recompute=False)
-        J = np.vstack((jpos[:,self.sim_qvel_idx], jrot[:,self.sim_qvel_idx]))
-        cartesian_acc_des = self.stiffness*dframe - self.damping*J.dot(self.sim.data.qvel[self.sim_qvel_idx])
-        impedance_acc_des = J.T.dot(np.linalg.solve(J.dot(J.T) + 1e-6*np.eye(6), cartesian_acc_des))
+        J = np.vstack((jpos[:, self.sim_qvel_idx], jrot[:, self.sim_qvel_idx]))
+        cartesian_acc_des = self.stiffness * dframe - self.damping * J.dot(self.sim.data.qvel[self.sim_qvel_idx])
+        impedance_acc_des = J.T.dot(np.linalg.solve(J.dot(J.T) + 1e-6 * np.eye(6), cartesian_acc_des))
 
         # Add stiffness and damping in the null space of the the Jacobian
         projection_matrix = J.T.dot(np.linalg.solve(J.dot(J.T), J))
@@ -165,5 +166,6 @@ class FullImpedanceController(BaseController):
         id_torque = self.sim.data.qfrc_inverse[self.sim_actuators_idx].copy()
         
         return id_torque
+
 
 register_controller(FullImpedanceController, "FullImpedanceController")
